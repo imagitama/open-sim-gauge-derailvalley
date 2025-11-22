@@ -1,0 +1,147 @@
+{
+  "layers": [
+    {
+      "name": "needle",
+      "width": 600,
+      "height": 600,
+      "shadow": true,
+      "operations": [
+        {
+          "type": "square",
+          "x": "50%",
+          "y": 75,
+          "width": 3,
+          "height": 25,
+          "fill": "rgb(10, 10, 10)"
+        },
+        {
+          "type": "triangle",
+          "x": "50%",
+          "y": 93,
+          "width": 20,
+          "height": 25,
+          "rotation": 0,
+          "fill": "rgb(10, 10, 10)"
+        },
+        {
+          "type": "square",
+          "x": "50%",
+          "y": 200,
+          "width": 20,
+          "height": 190,
+          "fill": "rgb(10, 10, 10)"
+        },
+        {
+          "type": "circle",
+          "x": "50%",
+          "y": "50%",
+          "radius": 15,
+          "fill": "rgb(10, 10, 10)"
+        },
+        {
+          "type": "square",
+          "x": "50%",
+          "y": 335,
+          "width": 20,
+          "height": 50,
+          "fill": "rgb(10, 10, 10)"
+        },
+        {
+          "type": "triangle",
+          "x": "50%",
+          "y": 355,
+          "width": 50,
+          "height": 60,
+          "rotation": 0,
+          "fill": "rgb(10, 10, 10)"
+        }
+      ]
+    },
+    {
+      "name": "bg",
+      "width": 600,
+      "height": 600,
+      "operations": [
+        {
+          "name": "stroke",
+          "type": "circle",
+          "radius": 262.5,
+          "strokeWidth": 25,
+          "strokeFill": "rgb(25, 25, 25)"
+        },
+        {
+          "type": "circle",
+          "radius": 250,
+          "fill": "rgb(255, 255, 255)"
+        },
+        {
+          "name": "Red Arc",
+          "type": "arc",
+          "radius": 240,
+          "degreesStart": 120,
+          "degreesEnd": 135,
+          "innerThickness": 23,
+          "fill": "rgb(175, 75, 75)"
+        },
+        {
+          "name": "Small Ticks",
+          "type": "gaugeTicks",
+          "radius": 240,
+          "degreesStart": -135,
+          "degreesEnd": 135,
+          "degreesGap": 3,
+          "tickWidth": 2,
+          "tickLength": 25,
+          "tickFill": "rgb(50, 50, 50)"
+        },
+        {
+          "name": "Large Ticks",
+          "type": "gaugeTicks",
+          "radius": 240,
+          "degreesStart": -135,
+          "degreesEnd": 135,
+          "degreesGap": 15,
+          "tickWidth": 3,
+          "tickLength": 45,
+          "tickFill": "rgb(50, 50, 50)"
+        },
+        {
+          "type": "gaugeTickLabels",
+          "radius": 165,
+          "degreesStart": -135,
+          "degreesEnd": 135,
+          "degreesGap": 30,
+          "labels": [
+            "0",
+            "10",
+            "20",
+            "30",
+            "40",
+            "50",
+            "60",
+            "70",
+            "80",
+            "90"
+          ],
+          "labelFill": "rgb(50, 50, 50)",
+          "labelSize": 36,
+          "labelFont": "Impact"
+        },
+        {
+          "type": "circle",
+          "radius": 5,
+          "fill": "rgb(255, 255, 255)"
+        },
+        {
+          "type": "text",
+          "text": "km/h",
+          "x": "50%",
+          "y": "75%",
+          "size": 36,
+          "font": "Impact",
+          "fill": "rgb(50, 50, 50)"
+        }
+      ]
+    }
+  ]
+}

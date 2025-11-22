@@ -1,0 +1,15 @@
+{
+  "panels": [
+    {
+      "name": "Derail Valley",
+      "width": 600,
+      "height": 600,
+      // "screen": 1,
+      "gauges": [
+        {
+          "path": "gauges/LocoDE2/gauge.json"
+        }
+      ]
+    }
+  ]
+}
