@@ -4,24 +4,32 @@ A panel for [OpenSimGauge](https://github.com/imagitama/open-sim-gauge) for the 
 
 Depends on [this Derail Valley mod](https://github.com/imagitama/derail-valley-websocket).
 
-Built for OpenSimGauge 0.0.8
+Built for OpenSimGauge 0.0.10.
 
 ## Usage
 
-**Ensure you have installed the required Derail Valley mod.**
+**Ensure you have installed the required Derail Valley mod!**
 
-1. Extract ZIP somewhere
-2. Copy `server/` into your OpenSimGauge server directory
-3. Copy `client/` into your OpenSimGauge client directory
-4. Update your server config to use `"DerailValley"` source
-5. Update your client config to use the Derail Valley panels
-6. Launch Derail Valley normally
-7. Launch your OpenSimGauge server and client normally
+1. Extract the ZIP contents somewhere
+2. Drag `client` folder into your OpenSimGauge client folder
+3. Drag `server` folder into your OpenSimGauge server folder
+4. Launch the game normally
+5. Launch OpenSimGauge normally
+
+If it doesn't work ensure that your `server.json` has:
+
+```json
+{
+  "source": "DerailValley"
+}
+```
+
+and your client has the correct panels.
 
 ## Development
 
 Created with VSCode (with C# and C# Dev Kit extensions) and dotnet CLI.
 
-1. Rename `Directory.Build.props.example` without `.example` and edit to make your paths work
-2. Open `data-sources/DerailValley` in VSCode and make changes
-3. Run `build.sh` or use dotnet CLI to build as a DL and place it into the appropriate spot
+1. Ensure `server/data-sources/DerailValley/lib/OpenSimGaugeAbstractions.dll` exists and is up to date
+2. Open `server/data-sources/DerailValley` in VSCode and make changes
+3. Run `build.sh` (or the dotnet CLI commands manually) to build it for distribution 

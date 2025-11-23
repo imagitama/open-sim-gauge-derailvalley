@@ -53,6 +53,7 @@ done
 
 echo "Copying..."
 cp -R "$SCRIPT_DIR"/client "$SCRIPT_DIR/dist/$platform/client"
+cp "$SCRIPT_DIR"/server/server.json "$SCRIPT_DIR/dist/$platform/server"
 cp "$SCRIPT_DIR"/README.md "$SCRIPT_DIR/dist/$platform"
 cp "$SCRIPT_DIR"/LICENSE.md "$SCRIPT_DIR/dist/$platform"
 cp "$SCRIPT_DIR"/CHANGELOG.md "$SCRIPT_DIR/dist/$platform"

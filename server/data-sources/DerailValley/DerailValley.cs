@@ -58,7 +58,7 @@ public class DerailValleyDataSource : DataSourceBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DerailValley] Failed to connect: {ex}");
+            Console.WriteLine($"[DerailValley] Failed to connect: {ex.Message}");
         }
     }
 
@@ -222,7 +222,7 @@ public class DerailValleyDataSource : DataSourceBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DerailValley] Failed to send: {ex}");
+            Console.WriteLine($"[DerailValley] Failed to send: {ex.Message}");
         }
     }
 
@@ -308,7 +308,7 @@ public class DerailValleyDataSource : DataSourceBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[DerailValley] Failed: {ex}");
+            Console.WriteLine($"[DerailValley] Failed: {ex.Message}");
         }
     }
 
