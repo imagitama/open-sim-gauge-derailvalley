@@ -1,0 +1,22 @@
+{
+  "name": "speedometer",
+  "width": 600,
+  "height": 600,
+  "layers": [
+    {
+      "image": "needle.svg",
+      "transform": {
+        "rotate": {
+          "var": ["car_speedometer", "kph"],
+          "from": -135,
+          "to": 135,
+          "min": 0,
+          "max": 90
+        }
+      }
+    },
+    {
+      "image": "bg.svg"
+    }
+  ]
+}

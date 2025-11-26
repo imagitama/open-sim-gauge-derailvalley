@@ -13,14 +13,48 @@ public class DerailValleyDataSource : DataSourceBase
     private ClientWebSocket _socket;
     private CancellationTokenSource? _cts;
     private readonly object _sendLock = new();
-    private readonly Uri _uri = new("ws://localhost:9450/dv"); // TODO: Configure
+    private readonly string _ipAddress = "localhost";
+    private readonly int _port = 9450;
+    private readonly Uri _uri;
     private readonly JsonSerializerOptions _json = new() { PropertyNameCaseInsensitive = true };
     public override string? CurrentVehicleName { get; set; } = "???";
-    private readonly Dictionary<(string VarName, string Unit), List<Action<object>>> _varCallbacksByKey = new();
+    private readonly Dictionary<(string VarName, string? Unit), List<Action<object>>> _varCallbacksByKey = new();
     private readonly Dictionary<string, List<Action<object>>> _eventCallbacksByKey = new();
-    private Action<string>? _vehicleCallback;
+    private Action<string?>? _vehicleCallback;
+    private DataSourceOptions? _options;
 
-    public DerailValleyDataSource(Config config) {}
+    public class DataSourceOptions
+    {
+        public string? IpAddress { get; set; }
+        public int? Port { get; set; }
+    }
+
+    public DerailValleyDataSource(Config config)
+    {
+        // TODO: have caller deserialize and provide this to us
+        if (config.SourceOptions is not null)
+        {
+            var jsonOptions = new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
+
+            _options = config.SourceOptions.Value.Deserialize<DataSourceOptions>(jsonOptions);
+
+            if (_options is null)
+                throw new InvalidOperationException("Invalid SourceOptions");
+
+            if (_options.IpAddress != null)
+                _ipAddress = _options.IpAddress;
+
+            if (_options.Port != null)
+                _port = (int)_options.Port;
+        }
+
+        _uri = new($"ws://{_ipAddress}:{_port}/dv");
+    }
 
     public override async Task Connect()
     {
@@ -29,7 +63,7 @@ public class DerailValleyDataSource : DataSourceBase
             if (IsConnected) return;
             _cts = new CancellationTokenSource();
 
-            Console.WriteLine($"[DerailValley] Connecting");
+            Console.WriteLine($"[DerailValley] Connecting to {_uri}...");
 
             _socket = new ClientWebSocket();
 
@@ -37,7 +71,7 @@ public class DerailValleyDataSource : DataSourceBase
             Console.WriteLine($"[DerailValley] Socket has opened");
             IsConnected = true;
             
-            SubscribeToEvent("CAR_NAME_CHANGED", value =>
+            _ = SubscribeToEvent("CAR_NAME_CHANGED", value =>
             {
                 string? vehicleName = value switch
                 {
@@ -52,7 +86,7 @@ public class DerailValleyDataSource : DataSourceBase
 
             Console.WriteLine($"[DerailValley] Telling server we want to init...");
 
-            Send(new { Type = MessageType.Init });
+            _ = Send(new { Type = MessageType.Init });
 
             _ = Task.Run(() => ReceiveLoop(_cts!.Token));
         }
@@ -82,7 +116,7 @@ public class DerailValleyDataSource : DataSourceBase
     {
     }
 
-    public override async Task SubscribeToVar(string varName, string unit, Action<object> callback)
+    public override async Task SubscribeToVar(string varName, string? unit, Action<object> callback)
     {
         var key = GetKey(varName, unit);
 
@@ -105,7 +139,7 @@ public class DerailValleyDataSource : DataSourceBase
         Console.WriteLine($"[DerailValley] Subscribed to var '{varName}' ({unit})");
     }
 
-    public override async Task UnsubscribeFromVar(string varName, string unit, Action<object?> callback)
+    public override async Task UnsubscribeFromVar(string varName, string? unit, Action<object?> callback)
     {
         Send(new Message<UnsubscribeFromVarPayload>
         {
@@ -119,16 +153,18 @@ public class DerailValleyDataSource : DataSourceBase
         Console.WriteLine($"[DerailValley] Unsubscribed from var '{varName}' ({unit})");
     }
 
-    private void NotifyNewVehicle(string? vehicleName)
+    private void NotifyNewVehicle(string? newVehicleName)
     {
-        Console.WriteLine($"[DerailValley] New train '{vehicleName}'");
-        CurrentVehicleName = vehicleName;
-        _vehicleCallback?.Invoke(vehicleName);
+        var oldVehicleName = CurrentVehicleName;
+        CurrentVehicleName = newVehicleName;
+        Console.WriteLine($"[DerailValley] New train {(oldVehicleName == null ? "null" : $"'{oldVehicleName}'")} => {(newVehicleName == null ? "null" : $"'{newVehicleName}'")}");
+        _vehicleCallback?.Invoke(newVehicleName);
     }
 
-    private void NotifyVarSubscribers(string varName, string unit, object value)
+    private void NotifyVarSubscribers(string varName, string? unit, object value)
     {
-        foreach (var kvp in _varCallbacksByKey)
+        var varCallbacksByKey = _varCallbacksByKey.ToDictionary(); // avoid InvalidOperationException
+        foreach (var kvp in varCallbacksByKey)
         {
             var (VarName, Unit) = kvp.Key;
 
@@ -186,7 +222,8 @@ public class DerailValleyDataSource : DataSourceBase
 
     private void NotifyEventSubscribers(string eventName, object value)
     {
-        foreach (var kvp in _eventCallbacksByKey)
+        var eventCallbacksByKey = _eventCallbacksByKey.ToDictionary(); // avoid InvalidOperationException
+        foreach (var kvp in eventCallbacksByKey)
         {
             var EventName = kvp.Key;
 
@@ -202,7 +239,7 @@ public class DerailValleyDataSource : DataSourceBase
         }
     }
 
-    private void Send(object payload)
+    private async Task Send(object payload)
     {
         try {
             var options = new JsonSerializerOptions
@@ -219,6 +256,8 @@ public class DerailValleyDataSource : DataSourceBase
             {
                 _socket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None).Wait();
             }
+
+            // TODO: wait for a reply
         }
         catch (Exception ex)
         {
@@ -253,40 +292,47 @@ public class DerailValleyDataSource : DataSourceBase
                                     Converters = { new JsonStringEnumConverter() }
                                 };
 
-                                var message = JsonSerializer.Deserialize<Message<object>>(json, options);
+                                var message = JsonSerializer.Deserialize<Message<object>>(json, options) ?? throw new Exception("Message is null");
 
                                 switch (message.Type)
                                 {
                                     case MessageType.Init:
-                                        var initPayload = ((JsonElement)message.Payload).Deserialize<InitPayload>(options);
+                                    {
+                                        var payload = ((JsonElement)message.Payload).Deserialize<InitPayload>(options) ?? throw new Exception("Payload is null");
 
-                                        CurrentVehicleName = initPayload.CarName;
+                                        CurrentVehicleName = payload.CarName;
                                         
-                                        Console.WriteLine($"[DerailValley] Initialize with vehicle '{CurrentVehicleName}'");
+                                        Console.WriteLine($"[DerailValley] Initialize with vehicle {(CurrentVehicleName == null ? "null" : $"'{CurrentVehicleName}'")}");
                                         break;
+                                    }
 
                                     case MessageType.Var:
-                                        var varPayload = ((JsonElement)message.Payload).Deserialize<VarPayload>(options);
+                                    {
+                                        var payload = ((JsonElement)message.Payload).Deserialize<VarPayload>(options) ?? throw new Exception("Payload is null");
+                                        // Console.WriteLine($"[DerailValley] Var name={payload.Name} unit={payload.Unit} value={payload.Value}");
 
-                                        // Console.WriteLine($"[DerailValley] Var name={varPayload.Name} unit={varPayload.Unit} value={varPayload.Value}");
-
-                                        NotifyVarSubscribers(varPayload.Name, varPayload.Unit, varPayload.Value);
+                                        NotifyVarSubscribers(payload.Name, payload.Unit, payload.Value);
                                         break;
+                                    }
 
                                     case MessageType.Event:
-                                        var eventPayload = ((JsonElement)message.Payload).Deserialize<EventPayload>(options);
+                                    {
+                                        var payload = ((JsonElement)message.Payload).Deserialize<EventPayload>(options) ?? throw new Exception("Payload is null");
 
-                                        NotifyEventSubscribers(eventPayload.Name, eventPayload.Value);
+                                        NotifyEventSubscribers(payload.Name, payload.Value);
                                         break;
+                                    }
 
                                     case MessageType.Error:
-                                        var errorPayload = ((JsonElement)message.Payload).Deserialize<ErrorPayload>(options);
+                                    {
+                                        var payload = ((JsonElement)message.Payload).Deserialize<ErrorPayload>(options) ?? throw new Exception("Payload is null");
 
-                                        Console.WriteLine($"[DerailValley] Remote error: {errorPayload.Message}");
+                                        Console.WriteLine($"[DerailValley] Remote error: {payload.Message}");
                                         break;
+                                    }
 
                                     default:
-                                        throw new Exception($" Unknown message type '{message.Type}'");
+                                        throw new Exception($"[DerailValley] Unknown message type '{message.Type}'");
                                 }
                             }
                             catch (Exception ex)

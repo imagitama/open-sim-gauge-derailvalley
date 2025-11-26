@@ -4,7 +4,7 @@ A panel for [OpenSimGauge](https://github.com/imagitama/open-sim-gauge) for the 
 
 Depends on [this Derail Valley mod](https://github.com/imagitama/derail-valley-websocket).
 
-Built for OpenSimGauge 0.0.10.
+Built for OpenSimGauge 0.0.13.
 
 ## Usage
 
@@ -24,7 +24,7 @@ If it doesn't work ensure that your `server.json` has:
 }
 ```
 
-and your client has the correct panels.
+and your client has the correct panels and gauges.
 
 ## Development
 

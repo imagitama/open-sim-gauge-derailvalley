@@ -1,0 +1,53 @@
+{
+  "layers": [
+    {
+      "name": "lever",
+      "operations": [
+        {
+          "type": "Square",
+          "fill": "#316BF2",
+          "name": "lever_square",
+          "width": 20,
+          "height": 250,
+          "position": [
+            "50%",
+            "50%"
+          ],
+          "origin": [
+            10,
+            250
+          ],
+          "rotate": 0,
+          "skip": false
+        }
+      ]
+    },
+    {
+      "name": "bg",
+      "operations": [
+        {
+          "type": "Arc",
+          "radius": 250,
+          "degreesStart": -180,
+          "degreesEnd": 0,
+          "innerThickness": 5,
+          "fill": "#ABABC4",
+          "name": "radius",
+          "width": 250,
+          "position": [
+            250,
+            250
+          ],
+          "origin": [
+            "50%",
+            "50%"
+          ],
+          "rotate": 180,
+          "skip": false
+        }
+      ]
+    }
+  ],
+  "width": 500,
+  "height": 500
+}

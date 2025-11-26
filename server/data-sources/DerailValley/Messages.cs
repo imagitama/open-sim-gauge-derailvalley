@@ -26,13 +26,13 @@ public class InitPayload : Payload
 public class SubscribeToVarPayload : Payload
 {
     public string Name;
-    public string Unit;
+    public string? Unit;
 }
 
 public class UnsubscribeFromVarPayload : Payload
 {
     public string Name;
-    public string Unit;
+    public string? Unit;
 }
 
 public class SubscribeToEventPayload : Payload
@@ -48,7 +48,7 @@ public class UnsubscribeFromEventPayload : Payload
 public class VarPayload : Payload
 {
     public string Name;
-    public string Unit;
+    public string? Unit;
     public object Value;
 }
 

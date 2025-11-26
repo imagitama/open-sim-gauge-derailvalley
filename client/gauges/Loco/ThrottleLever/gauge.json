@@ -1,0 +1,40 @@
+{
+  "name": "Throttle Lever",
+  "width": 500,
+  "height": 500,
+  "origin": ["50%", "50%"],
+  "layers": [
+    {
+      "name": "lever",
+      "image": "lever.svg",
+      "origin": ["50%", "50%"],
+      "position": ["50%", "50%"],
+      "transform": {
+        "rotate": {
+          "var": ["throttle", "position"],
+          "from": 0,
+          "to": 180,
+          "min": 0,
+          "max": 1,
+          "invert": false
+        }
+      },
+      "rotate": 0,
+      "translateX": 0,
+      "translateY": 0,
+      "debug": false,
+      "skip": false
+    },
+    {
+      "name": "bg",
+      "image": "bg.svg",
+      "origin": ["50%", "50%"],
+      "position": ["50%", "50%"],
+      "rotate": 0,
+      "translateX": 0,
+      "translateY": 0,
+      "debug": false,
+      "skip": false
+    }
+  ]
+}

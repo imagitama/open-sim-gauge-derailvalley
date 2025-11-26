@@ -1,66 +1,56 @@
 {
+  "width": 600,
+  "height": 600,
   "layers": [
     {
       "name": "needle",
-      "width": 600,
-      "height": 600,
       "shadow": true,
       "operations": [
         {
           "type": "square",
-          "x": "50%",
-          "y": 75,
+          "position": ["50%", 75],
           "width": 3,
           "height": 25,
           "fill": "rgb(10, 10, 10)"
         },
         {
           "type": "triangle",
-          "x": "50%",
-          "y": 93,
+          "position": ["50%", 93],
           "width": 20,
           "height": 25,
-          "rotation": 0,
           "fill": "rgb(10, 10, 10)"
         },
         {
           "type": "square",
-          "x": "50%",
-          "y": 200,
+          "position": ["50%", 200],
           "width": 20,
           "height": 190,
           "fill": "rgb(10, 10, 10)"
         },
         {
           "type": "circle",
-          "x": "50%",
-          "y": "50%",
+          "position": ["50%", "50%"],
           "radius": 15,
           "fill": "rgb(10, 10, 10)"
         },
         {
           "type": "square",
-          "x": "50%",
-          "y": 335,
+          "position": ["50%", 335],
           "width": 20,
           "height": 50,
           "fill": "rgb(10, 10, 10)"
         },
         {
           "type": "triangle",
-          "x": "50%",
-          "y": 355,
+          "position": ["50%", 355],
           "width": 50,
           "height": 60,
-          "rotation": 0,
           "fill": "rgb(10, 10, 10)"
         }
       ]
     },
     {
       "name": "bg",
-      "width": 600,
-      "height": 600,
       "operations": [
         {
           "name": "stroke",
@@ -111,18 +101,7 @@
           "degreesStart": -135,
           "degreesEnd": 135,
           "degreesGap": 30,
-          "labels": [
-            "0",
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90"
-          ],
+          "labels": ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90"],
           "labelFill": "rgb(50, 50, 50)",
           "labelSize": 36,
           "labelFont": "Impact"
@@ -135,8 +114,7 @@
         {
           "type": "text",
           "text": "km/h",
-          "x": "50%",
-          "y": "75%",
+          "position": ["50%", "75%"],
           "size": 36,
           "font": "Impact",
           "fill": "rgb(50, 50, 50)"
